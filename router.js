@@ -1,12 +1,7 @@
 var Profile = require("./profile.js");
 var renderer = require("./renderer.js");
 
-//home route
-//Handle HTTP route GET / and POST / i.e. Home
-	//if url ==== "/" && GET
-		// show searchfield
-	//if url ==="/"  && POST
-		// redirect to /username
+
 function home(request, response){
 	if(request.url === "/"){
 	  response.setHead(200,{'Content-Type': 'text/plain'});
@@ -17,17 +12,10 @@ function home(request, response){
 	}//end of if statement
 }//end of homeRoute()
 
-//user route
-//Handle HTTP route GET /:username i.e. /chalkers
-	//if url == "/..."
-		//get json from Treehouse
-			//on "end"
-				//show profile
-			//on "error"
-				//show error
+
 function user(request, response){
 	var username = request.url.replace("/", "")
-	if(username.length >= 0){
+	if(username.length > 0){ //!: >= cause of 'write after end'-error
 	  response.setHead(200,{'Content-Type': 'text/plain'});
 	  renderer.view('header',{},response);
 
