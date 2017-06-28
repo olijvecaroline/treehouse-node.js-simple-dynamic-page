@@ -1,22 +1,37 @@
 var Profile = require("./profile.js");
 var renderer = require("./renderer.js");
 
+var queryString = require("querystring");
+
+const commonHeader = {'Content-Type': 'text/plain'};
 
 function home(request, response){
 	if(request.url === "/"){
-	  response.setHead(200,{'Content-Type': 'text/plain'});
-		renderer.view('header', {}, response);
-	  renderer.view('search',{}, response);
-	  renderer.view('footer',{}, response);
-    response.end();
-	}//end of if statement
+		if(request.method.toLowerCase === 'get'){
+		  response.setHead(200,commonHeader);
+			renderer.view('header', {}, response);
+		  renderer.view('search',{}, response);
+		  renderer.view('footer',{}, response);
+	    response.end();
+		}else{
+			//get post-data from body
+      request.on("data", function(postBody){
+      //extract username
+      var query = queryString.parse(postBody.toString());
+      //redirect to username
+      response.writeHead(303,{"location": "/" + query.username});
+      response.end();
+      console.log (query["username"]);
+      });
+		}//end of if-get-else-post statement
+	}//end of if-home-url statement
 }//end of homeRoute()
 
 
 function user(request, response){
 	var username = request.url.replace("/", "")
 	if(username.length > 0){ //!: >= cause of 'write after end'-error
-	  response.setHead(200,{'Content-Type': 'text/plain'});
+	  response.setHead(200,commonHeader);
 	  renderer.view('header',{},response);
 
 		//get json from treehouse
@@ -47,7 +62,6 @@ function user(request, response){
 		 renderer.view('footer',{},response);
 		 response.end();
 		});// end of studentprofile on-error-handler
-
 	}//end of if-statement
 }//end of userRoute()
 
